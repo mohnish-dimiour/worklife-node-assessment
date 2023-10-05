@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reminder App</title>
+</head>
+<body>
+  <h1>Reminders</h1>
+  <div id="waterReminder"></div>
+  <div id="seatReminder"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script>
+    // Connect to the server using Socket.io
+    const socket = io();
+
+    // Listen for water reminder events
+    socket.on('water_reminder', (message) => {
+      const waterReminderDiv = document.getElementById('waterReminder');
+      waterReminderDiv.innerHTML += `<p>${message}</p>`;
+    });
+
+    // Listen for seat reminder events
+    socket.on('seat_reminder', (message) => {
+      const seatReminderDiv = document.getElementById('seatReminder');
+      seatReminderDiv.innerHTML += `<p>${message}</p>`;
+    });
+  </script>
+</body>
+</html>

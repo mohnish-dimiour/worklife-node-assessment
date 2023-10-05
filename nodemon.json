@@ -1,0 +1,7 @@
+{
+  "env": {
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost/mydb",
+    "JWT_SECRET": "your-secret-key"
+  }
+}

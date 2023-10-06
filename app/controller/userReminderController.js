@@ -1,5 +1,8 @@
 const UserReminder = require("../models/userReminderModel");
+const WorkSchedule = require("../models/workScheduleModel");
 const Reminder = require("../models/reminderModel");
+const { createScheduler } = require("../../utils/userReminderScheduler");
+const { default: mongoose } = require("mongoose");
 
 // Handle errors and send a response with status and message
 const handleResponse = (res, status, message) => {
@@ -7,10 +10,19 @@ const handleResponse = (res, status, message) => {
 };
 
 // Create a new user reminder
+// Create a new user reminder
 exports.createUserReminder = async (req, res) => {
   try {
-    const { userId, reminderId, count, frequency, startDate, endDate, status } =
+    const { reminderId, count, frequency, startDate, endDate, status } =
       req.body;
+    const userId = req.userData.userId;
+    // Fetch the reminder data based on the reminderId
+    const reminder = await Reminder.findById(reminderId);
+
+    if (!reminder) {
+      return res.status(422).json({ message: "Reminder not found" });
+    }
+
     const userReminder = new UserReminder({
       userId,
       reminderId,
@@ -20,11 +32,14 @@ exports.createUserReminder = async (req, res) => {
       endDate,
       status,
     });
+    
+
     await userReminder.save();
 
     res.status(201).json(userReminder);
   } catch (error) {
-    handleResponse(res, 400, error.message);
+    console.error(error);
+    res.status(400).json({ message: "Error creating user reminder" });
   }
 };
 

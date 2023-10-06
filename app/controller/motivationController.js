@@ -8,8 +8,8 @@ const handleResponse = (res, status, message) => {
 // Create a new motivation
 exports.createMotivation = async (req, res) => {
   try {
-    const { quotes } = req.body;
-    const motivation = await Motivation.create({ quotes });
+    const { quotes , author } = req.body;
+    const motivation = await Motivation.create({ quotes ,author});
     res.status(201).json(motivation);
   } catch (error) {
     handleResponse(res, 400, error.message);
@@ -43,8 +43,8 @@ exports.getMotivationById = async (req, res) => {
 // Update a motivation by ID
 exports.updateMotivation = async (req, res) => {
   try {
-    const { quotes } = req.body;
-    const motivation = await Motivation.findByIdAndUpdate(req.params.id, { quotes }, { new: true });
+    const { quotes , author } = req.body;
+    const motivation = await Motivation.findByIdAndUpdate(req.params.id, { quotes,author }, { new: true });
     if (!motivation) {
       handleResponse(res, 404, "Motivation details not found");
       return;

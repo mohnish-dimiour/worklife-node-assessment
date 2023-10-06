@@ -1,34 +1,40 @@
-function runTask(userId, title, message, io) {
-  io.to(userId).emit('scheduledMessage', {
-    userId,
-    title,
-    message
-  });
-}
+const schedule = require("node-schedule");
+function createScheduler(
+  startDateTime,
+  endDateTime,
+  startWorkTime,
+  count,
+  frequency,
+  io,
+  reminder,
+  userId
+) {
+  const startDate = new Date(startDateTime);
+  const endDate = new Date(endDateTime);
+  const startTime = new Date(startWorkTime); //startWorkTime * 60 * 60 * 1000; // Convert start work time to milliseconds
 
-function createScheduler(userId, sDate, eDate, frequency, count, title, message, io) {
-  let runs = 0;
-  const interval = 1000;//frequency * 60 * 1000; // Calculate the interval in milliseconds
+  let taskCount = 0;
+  
+    // Schedule the task using node-schedule
+    const job = schedule.scheduleJob(startDate, function () {
+      if (taskCount < count && new Date() < endDate) {
+        taskCount++;
+        // Calculate the delay for the next task based on the frequency
+        const nextTaskDelay = startTime + taskCount * frequency * 1000;
+        // Reschedule the task
+        setTimeout(() => {
+          job.reschedule(new Date(Date.now() + nextTaskDelay));
+        }, nextTaskDelay);
+      } else {
+        console.log("Scheduler stopped.");
+        job.cancel();
+      }
+    });  
+  
 
-  const schedulerInterval = setInterval(() => {
-    const currentDate = new Date();
-    const startDate = new Date(sDate);
-    const endDate = new Date(eDate);
-
-    if (currentDate >= startDate && currentDate <= endDate && runs < count) {
-      runTask(userId, title, message, io);
-      runs++;
-      console.log(`Run ${runs} - ${new Date()}`);
-    }
-
-    if (runs === count || currentDate > endDate) {
-      clearInterval(schedulerInterval); // Stop the scheduler
-      console.log('Scheduler finished.');
-    }
-  }, interval);
+  console.log("Scheduler started.");
 }
 
 module.exports = {
-  runTask,
   createScheduler,
 };

@@ -1,7 +1,7 @@
 {
   "env": {
-    "PORT": 3000,
-    "MONGODB_URI": "mongodb://localhost/mydb",
-    "JWT_SECRET": "your-secret-key"
+    "PORT" : 3001,
+    "MONGODB_URI" : "mongodb+srv://mohnishk3797:Qwerty12345@cluster0.lxhktak.mongodb.net/test_node?retryWrites=true&w=majority",
+    "JWT_SECRET" : "your-secret-key"
   }
 }

@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userReminderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   reminderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Reminder',
+    ref: "Reminder",
     required: true,
   },
   count: {
@@ -16,7 +16,7 @@ const userReminderSchema = new mongoose.Schema({
     default: 0, // Default value for the count field
   },
   frequency: {
-    type: String, 
+    type: String,
     required: true,
   },
   startDate: {
@@ -28,9 +28,9 @@ const userReminderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
-    default: 'active', // Default value for the status field
+    enum: ["active", "inactive"],
+    default: "active", // Default value for the status field
   },
 });
 
-module.exports = mongoose.model('UserReminder', userReminderSchema);
+module.exports = mongoose.model("UserReminder", userReminderSchema);

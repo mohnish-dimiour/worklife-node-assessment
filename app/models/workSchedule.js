@@ -1,29 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const workScheduleSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   startTime: {
-    type: String, 
+    type: String,
     required: true,
   },
   endTime: {
-    type: String, 
+    type: String,
     required: true,
   },
   jobType: {
-    type: String, 
+    type: String,
     required: true,
   },
   lunchStartTime: {
-    type: String, 
+    type: String,
   },
   lunchEndTime: {
-    type: String, 
+    type: String,
   },
 });
 
-module.exports = mongoose.model('WorkSchedule', workScheduleSchema);
+module.exports = mongoose.model("WorkSchedule", workScheduleSchema);

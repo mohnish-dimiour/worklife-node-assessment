@@ -10,6 +10,7 @@ router.use(authMiddleware);
 // Todo CRUD endpoints
 router.post('/', workController.createWork);
 router.get('/:id', workController.getWorkById);
+router.get('/', workController.getAllWork);
 router.patch('/:id', workController.updateWork);
 router.delete('/:id', workController.deleteWork);
 

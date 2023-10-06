@@ -1,47 +1,61 @@
-// controllers/userController.js
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+
+// Handle errors and send a response with status and message
+const handleResponse = (res, status, message) => {
+  res.status(status).json({ error: message });
+};
 
 // Registration logic
 exports.register = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({firstName, lastName, email, password: hashedPassword });
+    const user = new User({ firstName, lastName, email, password: hashedPassword });
     await user.save();
     res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    handleResponse(res, 400, error.message);
   }
 };
 
 // Login logic
 exports.login = async (req, res) => {
   try {
-    console.log("--->logins")
     const { email, password } = req.body;
-    console.log("req.body",req.body)
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: 'Authentication failed' });
+      handleResponse(res, 401, 'Authentication failed');
+      return;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Authentication failed' });
+      handleResponse(res, 401, 'Authentication failed');
+      return;
     }
 
-    console.log("----process.env.JWT_SECRET-",process.env.JWT_SECRET)
     // Generate and send a JWT token upon successful login
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
-    res.json({ token });
+
+    // Remove the password from the user object in the response
+    const userWithoutPassword = { ...user.toObject() };
+    delete userWithoutPassword.password;
+
+    // Create an object with both the user and token properties
+    const responseObj = { user: userWithoutPassword, token };
+
+    res.json(responseObj);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    handleResponse(res, 500, 'Internal Server Error');
   }
 };
+
+
+

@@ -1,18 +1,18 @@
-// controllers/WorkController.js
-const Reminder = require("../models/reminderModel"); // Update the model import
+const Reminder = require("../models/reminderModel");
+
+// Handle errors and send a response with status and message
+const handleResponse = (res, status, message) => {
+  res.status(status).json({ error: message });
+};
 
 // Create a new Reminder
 exports.createReminder = async (req, res) => {
   try {
     const { title, description } = req.body;
-    const reminder = new Reminder({
-      title,
-      description,
-    });
-    await reminder.save();
+    const reminder = await Reminder.create({ title, description });
     res.status(201).json(reminder);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    handleResponse(res, 400, error.message);
   }
 };
 
@@ -21,11 +21,12 @@ exports.getReminderById = async (req, res) => {
   try {
     const reminder = await Reminder.findById(req.params.id);
     if (!reminder) {
-      return res.status(404).json({ error: "Reminder details not found" });
+      handleResponse(res, 404, "Reminder details not found");
+      return;
     }
     res.json(reminder);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };
 
@@ -33,29 +34,41 @@ exports.getReminderById = async (req, res) => {
 exports.updateReminder = async (req, res) => {
   try {
     const { title, description } = req.body;
-    const reminder = await Reminder.findById(req.params.id);
+    const reminder = await Reminder.findByIdAndUpdate(
+      req.params.id,
+      { title, description },
+      { new: true }
+    );
     if (!reminder) {
-      return res.status(404).json({ error: "Reminder details not found" });
+      handleResponse(res, 404, "Reminder details not found");
+      return;
     }
-    reminder.title = title;
-    reminder.description = description;
-    await reminder.save();
     res.json(reminder);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };
 
 // Delete a Reminder by ID
 exports.deleteReminder = async (req, res) => {
   try {
-    const reminder = await Reminder.findById(req.params.id);
+    const reminder = await Reminder.findByIdAndRemove(req.params.id);
     if (!reminder) {
-      return res.status(404).json({ error: "Reminder not found" });
+      handleResponse(res, 404, "Reminder not found");
+      return;
     }
-    await reminder.remove();
     res.json({ message: "Reminder deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    handleResponse(res, 500, "Internal Server Error");
+  }
+};
+
+// Get all Reminders
+exports.getAllReminders = async (req, res) => {
+  try {
+    const reminders = await Reminder.find();
+    res.json(reminders);
+  } catch (error) {
+    handleResponse(res, 500, "Internal Server Error");
   }
 };

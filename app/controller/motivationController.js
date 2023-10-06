@@ -1,17 +1,18 @@
-// controllers/motivationController.js
-const Motivation = require('../models/motivationModel');
+const Motivation = require("../models/motivationModel");
+
+// Handle errors and send a response with status and message
+const handleResponse = (res, status, message) => {
+  res.status(status).json({ error: message });
+};
 
 // Create a new motivation
 exports.createMotivation = async (req, res) => {
   try {
     const { quotes } = req.body;
-    const motivation = new Motivation({
-      quotes
-    });
-    await motivation.save();
+    const motivation = await Motivation.create({ quotes });
     res.status(201).json(motivation);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    handleResponse(res, 400, error.message);
   }
 };
 
@@ -21,7 +22,7 @@ exports.getAllMotivations = async (req, res) => {
     const motivations = await Motivation.find();
     res.json(motivations);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };
 
@@ -30,11 +31,12 @@ exports.getMotivationById = async (req, res) => {
   try {
     const motivation = await Motivation.findById(req.params.id);
     if (!motivation) {
-      return res.status(404).json({ error: 'motivation details not found' });
+      handleResponse(res, 404, "Motivation details not found");
+      return;
     }
     res.json(motivation);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };
 
@@ -42,28 +44,27 @@ exports.getMotivationById = async (req, res) => {
 exports.updateMotivation = async (req, res) => {
   try {
     const { quotes } = req.body;
-    const motivation = await Motivation.findById(req.params.id);
+    const motivation = await Motivation.findByIdAndUpdate(req.params.id, { quotes }, { new: true });
     if (!motivation) {
-      return res.status(404).json({ error: 'motivation deatils not found' });
+      handleResponse(res, 404, "Motivation details not found");
+      return;
     }
-    motivation.quotes = quotes;
-    await motivation.save();
     res.json(motivation);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };
 
 // Delete a motivation by ID
 exports.deleteMotivation = async (req, res) => {
   try {
-    const motivation = await Motivation.findById(req.params.id);
+    const motivation = await Motivation.findByIdAndRemove(req.params.id);
     if (!motivation) {
-      return res.status(404).json({ error: 'motivation not found' });
+      handleResponse(res, 404, "Motivation not found");
+      return;
     }
-    await motivation.remove();
-    res.json({ message: 'motivation deleted successfully' });
+    res.json({ message: "Motivation deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    handleResponse(res, 500, "Internal Server Error");
   }
 };

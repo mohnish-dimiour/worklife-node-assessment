@@ -66,7 +66,7 @@ exports.deleteReminder = async (req, res) => {
 // Get all Reminders
 exports.getAllReminders = async (req, res) => {
   try {
-    const reminders = await Reminder.find();
+    const reminders = await Reminder.find({});
     res.json(reminders);
   } catch (error) {
     handleResponse(res, 500, "Internal Server Error");

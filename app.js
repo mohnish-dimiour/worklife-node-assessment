@@ -27,10 +27,6 @@ const server = http.createServer(app);
 // Configure Socket.io
 const io = socketConfig(server);
 
-app.use((req, res, next) => {
-  req.io = io; // Attach the io object to the request object
-  next(); // Move on to the next middleware
-});
 
 // Routes
 app.use('/auth', authRoutes); // User authentication routes

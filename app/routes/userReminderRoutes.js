@@ -6,7 +6,7 @@ const userReminderController = require('../controller/userReminderController');
 
 // Use authentication middleware for User Reminder routes
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 // User Reminder CRUD endpoints
 router.post('/', userReminderController.createUserReminder);

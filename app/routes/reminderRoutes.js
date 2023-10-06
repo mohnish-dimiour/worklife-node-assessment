@@ -5,7 +5,7 @@ const authMiddleware = require('../../middleware/authMiddleware');
 const reminderController = require('../controller/reminderController'); // Updated controller name
 
 // Use authentication middleware for Todo routes
-router.use(authMiddleware);
+// router.use(authMiddleware);
 
 // Reminder CRUD endpoints
 router.get('/', reminderController.getAllReminders); // Updated route path and controller function name
